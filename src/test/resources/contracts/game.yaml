@@ -1,0 +1,54 @@
+---
+name: should return game data for one game
+request:
+  method: GET
+  url: /game/401220143
+  matchers:
+    url:
+      regex: /game/[\d+]
+  headers:
+    Content-Type: application/json
+response:
+  status: 200
+  body:
+    week: 5
+    "group.abbreviation": "reg"
+    shortName: "ARI @ NYJ"
+  headers:
+    Content-Type: application/json;charset=UTF-8
+
+---
+name: should return game data for one week
+request:
+  method: GET
+  url: /game/week/[\d+]
+  headers:
+    Content-Type: application/json
+response:
+  status: 200
+  body:
+    # Guessing at array syntax here, may need to dumb these tests down a bit
+    [
+      week: 5,
+      "group.abbreviation": "reg",
+      shortName: "ARI @ NYJ"
+    ]
+  matchers:
+    body:
+      - path: $[*].week
+        type: by_type
+        minOccurrence: 1
+      - path: $[0].week
+        type: by_regex
+        predefined: number
+      - path: $[*].group.abbreviation
+        type: by_type
+        minOccurrence: 1
+      - path: $[*].group.abbreviation
+        type: by_type
+        minOccurrence: 1
+      - path: $[0].week
+        type: by_regex
+        value: ".+ @ .+"
+  headers:
+    Content-Type: application/json;charset=UTF-8
